@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -r esm server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1028.0",
+    "aws4": "^1.11.0",
+    "axios": "^0.24.0",
+    "bcrypt": "^5.0.1",
+    "bson-ext": "^4.0.2",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^10.0.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "express-jwt": "^6.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "kerberos": "^2.0.0",
+    "mongodb-client-encryption": "^2.0.0",
+    "mongoose": "^6.0.15",
+    "morgan": "^1.10.0",
+    "nanoid": "^3.1.30",
+    "nodemon": "^2.0.15",
+    "react-chat-engine": "^1.11.22",
+    "slugify": "^1.6.2"
+  },
+  "description": ""
+}
