@@ -1,6 +1,7 @@
 import User from "../models/user";
 import Student from "../models/student";
 import Admin from "../models/admin"
+import Instructor from "../models/instructor"
 import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
@@ -362,6 +363,7 @@ export const forgotPassword = async (req, res) => {
             { email },
             { passwordResetCode: shortCode }
         );
+
         if (!user) return res.status(400).send("User not found");
 
         // prepare for email
@@ -561,7 +563,7 @@ export const forgotPassword = async (req, res) => {
                 res.json({ ok: true });
             })
             .catch((err) => {
-                console.log(err);
+                res.status(400).send("Email is not registered to Simple Email Services")
             });
     } catch (err) {
         console.log(err);
@@ -574,7 +576,7 @@ export const resetPassword = async (req, res) => {
         // console.table({ email, code, newPassword });
         const hashedPassword = await hashPassword(newPassword);
 
-        const user = User.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
             {
                 email,
                 passwordResetCode: code,
@@ -584,6 +586,21 @@ export const resetPassword = async (req, res) => {
                 passwordResetCode: "",
             }
         ).exec();
+        if (user && user.role.includes("Admin")) {
+            const admin = await Admin.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
+        if (user && user.role.includes("Instructor")) {
+            const instructor = await Instructor.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
+        if (user && user.role.includes("Student")) {
+            const student = await Student.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
         res.json({ ok: true });
     } catch (err) {
         console.log(err);
