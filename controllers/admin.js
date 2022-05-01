@@ -734,7 +734,7 @@ export const editInstructor = async (req, res) => {
             firstName: req.body.firstName,
             middleName: req.body.middleName,
             lastName: req.body.lastName,
-            fullName: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            fullName: req.body.firstName + ' ' + req.body.lastName,
             birthDate: req.body.birthDate,
             gender: req.body.gender,
             contact: req.body.contact,
@@ -907,7 +907,7 @@ export const editStudent = async (req, res) => {
             firstName: req.body.firstName,
             middleName: req.body.middleName,
             lastName: req.body.lastName,
-            fullName: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            fullName: req.body.firstName + ' ' + req.body.lastName,
             studentNum: req.body.studentNum,
             birthDate: req.body.birthDate,
             gender: req.body.gender,
@@ -972,7 +972,7 @@ export const editUser = async (req, res) => {
     try {
         const updatedUser = await User.findOneAndUpdate({ email: req.params.slug }, {
             email: req.body.email,
-            name: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            name: req.body.firstName + ' ' + req.body.lastName,
             picture: req.body.image
         }, { new: true }).exec()
         if (updatedUser) return res.json(updatedUser);
