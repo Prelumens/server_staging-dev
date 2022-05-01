@@ -80,7 +80,7 @@ export const register = async (req, res) => {
                         Charset: "UTF-8",
                         Data: `
                             <!DOCTYPE html>
-    
+
                             <html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
                             <head>
                             <title></title>
@@ -94,48 +94,48 @@ export const register = async (req, res) => {
                                     * {
                                         box-sizing: border-box;
                                     }
-    
+
                                     body {
                                         margin: 0;
                                         padding: 0;
                                     }
-    
+
                                     a[x-apple-data-detectors] {
                                         color: inherit !important;
                                         text-decoration: inherit !important;
                                     }
-    
+
                                     #MessageViewBody a {
                                         color: inherit;
                                         text-decoration: none;
                                     }
-    
+
                                     p {
                                         line-height: inherit
                                     }
-    
+
                                     @media (max-width:700px) {
                                         .icons-inner {
                                             text-align: center;
                                         }
-    
+
                                         .icons-inner td {
                                             margin: 0 auto;
                                         }
-    
+
                                         .fullMobileWidth,
                                         .row-content {
                                             width: 100% !important;
                                         }
-    
+
                                         .image_block img.big {
                                             width: auto !important;
                                         }
-    
+
                                         .column .border {
                                             display: none;
                                         }
-    
+
                                         .stack .column {
                                             width: 100%;
                                             display: block;

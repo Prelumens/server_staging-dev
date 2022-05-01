@@ -112,12 +112,20 @@ export const removeAssignment = async (req, res) => {
 export const updateAssignment = async (req, res) => {
     try {
         console.log('UPDATE ASSIGNMENT', req.body)
+        const { newFiles } = req.body.newFiles;
         const assignment = await Assignment.findOneAndUpdate({ slug: req.params.slug }, {
             slug: slugify(req.body.title),
             course: req.body.assignCourse,
-            attachment: [...req.body.files, ...req.body.newFiles],
             ...req.body,
         }, { new: true }).exec();
+        //Map through the new files array ang append one by one
+        if(req.body.newFiles){
+            req.body.newFiles.forEach(async (item) => {
+                const files = await Assignment.findOneAndUpdate({ slug: req.params.slug }, {
+                    $push: {attachment: item}
+                }, { new: true }).exec()
+            })
+        }
         res.json(assignment);
     } catch (error) {
         console.log(error)
