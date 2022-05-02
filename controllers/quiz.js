@@ -81,7 +81,11 @@ export const getQuiz = async (req, res) => {
 
 export const quizEdit = async (req, res) => {
   try {
-    console.log(req.body)
+
+    const alreadyExist = await Quiz.findOne({
+        slug: slugify(req.body.title.toLowerCase()),
+    });
+    if (alreadyExist) return res.status(400).send("Title is taken");
     const quiz = await Quiz.findOneAndUpdate({slug: req.params.slug}, {
       title: req.body.title,
       slug: slugify(req.body.title.toLowerCase()),
@@ -172,8 +176,7 @@ export const questionEdit = async (req, res) => {
     ).exec();
     //Map through the new files array ang append one by one
     console.log('req.body.options', req.body.options)
-    req.body.options.forEach(async (option) => {
-      console.log('option', option)
+    for (let index = 0; index < req.body.options.length; index++) {
       const push = await Quiz.updateOne(
         {
           "_id": req.params.quizId,
@@ -181,12 +184,13 @@ export const questionEdit = async (req, res) => {
         },
         {
           $push:{
-              "questions.$.options": option,
+              "questions.$.options": req.body.options[index],
           },
         },
         { new: true }
       ).exec();
-    })
+
+    }
     // const push = await Quiz.updateOne(
     //   {
     //     "_id": req.params.quizId,
