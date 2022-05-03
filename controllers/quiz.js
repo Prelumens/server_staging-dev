@@ -82,17 +82,13 @@ export const getQuiz = async (req, res) => {
 export const quizEdit = async (req, res) => {
   try {
 
-    const alreadyExist = await Quiz.findOne({
-        slug: slugify(req.body.title.toLowerCase()),
-    });
-    if (alreadyExist) return res.status(400).send("Title is taken");
     const quiz = await Quiz.findOneAndUpdate({slug: req.params.slug}, {
       title: req.body.title,
       slug: slugify(req.body.title.toLowerCase()),
       course: req.body.assignCourse,
       access: req.body.access,
       // questions: req.body.questions,
-      deadline: req.body.deadline.dateString,
+      deadline: req.body.deadline,
       description: req.body.description,
     },
       {new: true} ).exec();

@@ -111,12 +111,6 @@ export const removeAssignment = async (req, res) => {
 
 export const updateAssignment = async (req, res) => {
     try {
-
-        //check if assignment exist in database
-        const alreadyExist = await Assignment.findOne({
-            slug: slugify(req.body.title.toLowerCase()),
-        });
-        if (alreadyExist) return res.status(400).send("Title is taken");
         const assignment = await Assignment.findOneAndUpdate({ slug: req.params.slug }, {
             slug: slugify(req.body.title),
             course: req.body.assignCourse,
@@ -198,10 +192,6 @@ export const getInteractive = async (req, res) => {
 
 export const updateInteractive = async (req, res) => {
     try {
-        const alreadyExist = await Interactive.findOne({
-            slug: slugify(req.body.title.toLowerCase()),
-        });
-        if (alreadyExist) return res.status(400).send("Title is taken");
         const interactive = await Interactive.findOneAndUpdate({ slug: req.params.slug }, {
             slug: slugify(req.body.title),
             course: req.body.assignCourse,
