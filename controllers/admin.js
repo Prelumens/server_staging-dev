@@ -46,9 +46,11 @@ export const registerStudent = async (req, res) => {
         let userExist = await User.findOne({ email }).exec();
         let userName = await Student.findOne({ username }).exec();
         let studentNumExist = await Student.findOne({ studentNum }).exec();
+        let studentEmail = await Student.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email already exist.");
         if (studentNumExist) return res.status(400).send("Student Number already exist.");
         if (userName) return res.status(400).send("Username already exist.");
+        if (studentEmail) return res.status(400).send("Email already taken")
         // hash password
         const hashedPassword = await hashPassword(password);
 
@@ -419,6 +421,12 @@ export const registerInstructor = async (req, res) => {
         } = req.body;
         let userExist = await User.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email already exist.");
+
+        let userName = await Instructor.findOne({ username }).exec();
+        let instructorEmail = await Instructor.findOne({ email }).exec();
+
+        if (userName) return res.status(400).send("Username already exist.");
+        if (instructorEmail) return res.status(400).send("Email already taken")
 
         // hash password
         const hashedPassword = await hashPassword(password);

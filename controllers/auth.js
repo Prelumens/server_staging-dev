@@ -31,6 +31,9 @@ export const register = async (req, res) => {
         let userExist = await User.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email is taken");
 
+        let adminExist = await Admin.findOne({ email }).exec();
+        if (adminExist) return res.status(400).send("Email is taken");
+
         let usernameExist = await User.findOne({ username }).exec()
         if (usernameExist) return res.status(400).send("Username is taken")
 
