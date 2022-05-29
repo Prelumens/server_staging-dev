@@ -167,15 +167,26 @@ export const getQuiz = async (req, res) => {
 
 export const getStudentActivity = async (req, res) => {
   const { username } = req.params
+  //get current user
+  const currentUser = await User.findById(req.user._id).exec();
+  // console.log("CURRENT USERNAME", currentUser.username)
+  // console.log("USERNAME", username)
   try {
-    // //get profile of the user
-    const student = await Student.findOne({ username }).exec();
-    if (student)
-      return res.json(student);
+    //get profile of the user
+    if (currentUser.username == username) {
+      const student = await Student.findOne({ username }).exec();
+      if (student && currentUser)
+        return res.json(student);
+    } else {
+      return res
+        .status(401)
+        .send("Unauthorized");
+    }
   } catch (err) {
     console.log(err);
   }
 }
+
 
 export const getCurrentStudent = async (req, res) => {
   const { username } = req.params
@@ -800,12 +811,12 @@ export const studentEditProfileStudent = async (req, res) => {
   }
 }
 
-export const getInteractiveSubmission = async (req,res) => {
+export const getInteractiveSubmission = async (req, res) => {
   console.log('params', req.params)
   try {
     const submission = await Submission.findOne({ student: req.user._id, todo: req.params.slug })
       .exec();
-      console.log('submission', submission)
+    console.log('submission', submission)
     res.json(submission)
   } catch (error) {
     console.log(error)
