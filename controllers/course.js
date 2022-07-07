@@ -1026,3 +1026,26 @@ export const updateWiki = async (req, res) => {
         return res.status(400).send("Update Wiki failed");
     }
 };
+
+//add feedback
+export const addFeedback = async (req, res) => {
+    try {
+        const { slug } = req.params;
+        const { criterionOne, criterionTwo, criterionThree, overallExperience, comment } = req.body.feedback;
+
+        const updated = await Course.findOneAndUpdate(
+            { slug },
+            {
+                $push: { courseFeedbacks: { criterionOne, criterionTwo, criterionThree, overallExperience, comment, student: req.user._id} },
+            },
+            { new: true }
+        )
+            .populate("instructor", "_id name")
+            .exec();
+
+        res.json(updated);
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send("Add Feedback failed");
+    }
+};

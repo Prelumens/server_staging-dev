@@ -52,6 +52,36 @@ const lessonSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const courseFeedbacksSchema = new mongoose.Schema(
+  {
+    student: {
+      type: ObjectId,
+      ref: "User",
+      required: true,
+    },
+    criterionOne: {
+      type: Number,
+      required: true,
+    },
+    criterionTwo: {
+      type: Number,
+      required: true,
+    },
+    criterionThree: {
+      type: Number,
+      required: true,
+    },
+    overallExperience: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: {},
+      minlength: 200,
+    },
+  },
+  { timestamps: true }
+);
 const courseSchema = new mongoose.Schema(
   {
     name: {
@@ -88,6 +118,7 @@ const courseSchema = new mongoose.Schema(
     },
     lessons: [lessonSchema],
     notifications: [notificationSchema],
+    courseFeedbacks:[courseFeedbacksSchema],
     progress: {
       type: Number
     }
