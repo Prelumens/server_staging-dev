@@ -1,6 +1,7 @@
 import User from "../models/user";
 import Student from "../models/student";
 import Admin from "../models/admin"
+import Instructor from "../models/instructor"
 import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
@@ -29,6 +30,9 @@ export const register = async (req, res) => {
         }
         let userExist = await User.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email is taken");
+
+        let adminExist = await Admin.findOne({ email }).exec();
+        if (adminExist) return res.status(400).send("Email is taken");
 
         let usernameExist = await User.findOne({ username }).exec()
         if (usernameExist) return res.status(400).send("Username is taken")
@@ -79,7 +83,7 @@ export const register = async (req, res) => {
                         Charset: "UTF-8",
                         Data: `
                             <!DOCTYPE html>
-    
+
                             <html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
                             <head>
                             <title></title>
@@ -93,48 +97,48 @@ export const register = async (req, res) => {
                                     * {
                                         box-sizing: border-box;
                                     }
-    
+
                                     body {
                                         margin: 0;
                                         padding: 0;
                                     }
-    
+
                                     a[x-apple-data-detectors] {
                                         color: inherit !important;
                                         text-decoration: inherit !important;
                                     }
-    
+
                                     #MessageViewBody a {
                                         color: inherit;
                                         text-decoration: none;
                                     }
-    
+
                                     p {
                                         line-height: inherit
                                     }
-    
+
                                     @media (max-width:700px) {
                                         .icons-inner {
                                             text-align: center;
                                         }
-    
+
                                         .icons-inner td {
                                             margin: 0 auto;
                                         }
-    
+
                                         .fullMobileWidth,
                                         .row-content {
                                             width: 100% !important;
                                         }
-    
+
                                         .image_block img.big {
                                             width: auto !important;
                                         }
-    
+
                                         .column .border {
                                             display: none;
                                         }
-    
+
                                         .stack .column {
                                             width: 100%;
                                             display: block;
@@ -190,7 +194,7 @@ export const register = async (req, res) => {
                             <tr>
                             <td>
                             <div align="center">
-                            <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="www.example.com" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="www.example.com" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
+                            <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://www.staging-dev-prelumens.xyz/" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="http://www.staging-dev-prelumens.xyz/" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
                             <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
                             </div>
                             </td>
@@ -362,6 +366,7 @@ export const forgotPassword = async (req, res) => {
             { email },
             { passwordResetCode: shortCode }
         );
+
         if (!user) return res.status(400).send("User not found");
 
         // prepare for email
@@ -561,7 +566,7 @@ export const forgotPassword = async (req, res) => {
                 res.json({ ok: true });
             })
             .catch((err) => {
-                console.log(err);
+                res.status(400).send("Email is not registered to Simple Email Services")
             });
     } catch (err) {
         console.log(err);
@@ -574,7 +579,7 @@ export const resetPassword = async (req, res) => {
         // console.table({ email, code, newPassword });
         const hashedPassword = await hashPassword(newPassword);
 
-        const user = User.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
             {
                 email,
                 passwordResetCode: code,
@@ -584,6 +589,21 @@ export const resetPassword = async (req, res) => {
                 passwordResetCode: "",
             }
         ).exec();
+        if (user && user.role.includes("Admin")) {
+            const admin = await Admin.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
+        if (user && user.role.includes("Instructor")) {
+            const instructor = await Instructor.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
+        if (user && user.role.includes("Student")) {
+            const student = await Student.findOneAndUpdate({ email }, {
+                password: newPassword
+            }).exec()
+        }
         res.json({ ok: true });
     } catch (err) {
         console.log(err);

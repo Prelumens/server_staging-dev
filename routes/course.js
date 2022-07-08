@@ -31,7 +31,8 @@ import {
     courseTodo,
     addWiki,
     removeWiki,
-    userEnrolledCourses
+    userEnrolledCourses,
+    addFeedback
 } from '../controllers/course';
 // get routes
 router.get('/courses', courses)
@@ -72,6 +73,8 @@ router.post("/mark-completed", requireSignin, markCompleted);
 router.post("/list-completed", requireSignin, listCompleted);
 router.post("/mark-incomplete", requireSignin, markIncomplete);
 
+//feedback
+router.post("/course/feedback/:slug/", requireSignin, addFeedback)
 
 router.get('/to-do/:slug', requireSignin, courseTodo)
 module.exports = router

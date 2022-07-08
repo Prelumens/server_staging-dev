@@ -111,13 +111,19 @@ export const removeAssignment = async (req, res) => {
 
 export const updateAssignment = async (req, res) => {
     try {
-        console.log('UPDATE ASSIGNMENT', req.body)
         const assignment = await Assignment.findOneAndUpdate({ slug: req.params.slug }, {
             slug: slugify(req.body.title),
             course: req.body.assignCourse,
-            attachment: [...req.body.files, ...req.body.newFiles],
             ...req.body,
         }, { new: true }).exec();
+        //Map through the new files array ang append one by one
+        if(req.body.newFiles){
+            req.body.newFiles.forEach(async (item) => {
+                const files = await Assignment.findOneAndUpdate({ slug: req.params.slug }, {
+                    $push: {attachment: item}
+                }, { new: true }).exec()
+            })
+        }
         res.json(assignment);
     } catch (error) {
         console.log(error)
@@ -186,15 +192,31 @@ export const getInteractive = async (req, res) => {
 
 export const updateInteractive = async (req, res) => {
     try {
-        // console.log(req.body)
         const interactive = await Interactive.findOneAndUpdate({ slug: req.params.slug }, {
             slug: slugify(req.body.title),
             course: req.body.assignCourse,
             instructor: req.user._id,
-            instructions: req.body.instructionSet,
-            questions: req.body.questions,
             ...req.body,
         }, { new: true }).exec();
+        const reset = await Interactive.updateOne({"slug": req.params.slug},
+            { $unset:{
+                "instructions": [],
+                "questions": [],
+              },
+            },{new: true }).exec();
+        //Map through the new instructions and append one by one
+        for (let index = 0; index < req.body.instructionSet.length; index++) {
+            const instructionAppend = await Interactive.findOneAndUpdate({ slug: req.params.slug }, {
+                $push: {instructions: req.body.instructionSet[index]}
+            }, { new: true }).exec()
+
+        }
+        for (let index = 0; index < req.body.questions.length; index++) {
+            const questionAppend = await Interactive.findOneAndUpdate({ slug: req.params.slug }, {
+                $push: {questions: req.body.questions[index]}
+            }, { new: true }).exec()
+
+        }
         res.json(interactive);
     } catch (error) {
         console.log(error)

@@ -46,9 +46,11 @@ export const registerStudent = async (req, res) => {
         let userExist = await User.findOne({ email }).exec();
         let userName = await Student.findOne({ username }).exec();
         let studentNumExist = await Student.findOne({ studentNum }).exec();
+        let studentEmail = await Student.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email already exist.");
         if (studentNumExist) return res.status(400).send("Student Number already exist.");
         if (userName) return res.status(400).send("Username already exist.");
+        if (studentEmail) return res.status(400).send("Email already taken")
         // hash password
         const hashedPassword = await hashPassword(password);
 
@@ -196,7 +198,7 @@ export const registerStudent = async (req, res) => {
                         <tr>
                         <td>
                         <div align="center">
-                        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="www.example.com" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="www.example.com" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
+                        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://prelumens.xyz/" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="https://prelumens.xyz/" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
                         <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
                         </div>
                         </td>
@@ -420,6 +422,12 @@ export const registerInstructor = async (req, res) => {
         let userExist = await User.findOne({ email }).exec();
         if (userExist) return res.status(400).send("Email already exist.");
 
+        let userName = await Instructor.findOne({ username }).exec();
+        let instructorEmail = await Instructor.findOne({ email }).exec();
+
+        if (userName) return res.status(400).send("Username already exist.");
+        if (instructorEmail) return res.status(400).send("Email already taken")
+
         // hash password
         const hashedPassword = await hashPassword(password);
 
@@ -567,7 +575,7 @@ export const registerInstructor = async (req, res) => {
                         <tr>
                         <td>
                         <div align="center">
-                        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="www.example.com" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="www.example.com" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
+                        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://prelumens.xyz/" style="height:44px;width:157px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#00BFFF" fillcolor="#00bfff"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, sans-serif; font-size:16px"><![endif]--><a href="https://prelumens.xyz/" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00bfff;border-radius:4px;width:auto;border-top:1px solid #00BFFF;border-right:1px solid #00BFFF;border-bottom:1px solid #00BFFF;border-left:1px solid #00BFFF;padding-top:5px;padding-bottom:5px;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><strong>Go to Website</strong></span></span></a>
                         <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
                         </div>
                         </td>
@@ -734,7 +742,7 @@ export const editInstructor = async (req, res) => {
             firstName: req.body.firstName,
             middleName: req.body.middleName,
             lastName: req.body.lastName,
-            fullName: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            fullName: req.body.firstName + ' ' + req.body.lastName,
             birthDate: req.body.birthDate,
             gender: req.body.gender,
             contact: req.body.contact,
@@ -907,7 +915,7 @@ export const editStudent = async (req, res) => {
             firstName: req.body.firstName,
             middleName: req.body.middleName,
             lastName: req.body.lastName,
-            fullName: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            fullName: req.body.firstName + ' ' + req.body.lastName,
             studentNum: req.body.studentNum,
             birthDate: req.body.birthDate,
             gender: req.body.gender,
@@ -972,7 +980,7 @@ export const editUser = async (req, res) => {
     try {
         const updatedUser = await User.findOneAndUpdate({ email: req.params.slug }, {
             email: req.body.email,
-            name: req.body.lastName + ',' + ' ' + req.body.firstName + ' ' + req.body.middleName,
+            name: req.body.firstName + ' ' + req.body.lastName,
             picture: req.body.image
         }, { new: true }).exec()
         if (updatedUser) return res.json(updatedUser);

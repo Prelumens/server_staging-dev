@@ -81,16 +81,26 @@ export const getQuiz = async (req, res) => {
 
 export const quizEdit = async (req, res) => {
   try {
-    console.log(req.body)
+
     const quiz = await Quiz.findOneAndUpdate({slug: req.params.slug}, {
       title: req.body.title,
       slug: slugify(req.body.title.toLowerCase()),
       course: req.body.assignCourse,
       access: req.body.access,
-      questions: req.body.questions,
-      deadline: req.body.deadline.dateString,
-      description: req.body.description
-    }, {new: true} ).exec();
+      // questions: req.body.questions,
+      deadline: req.body.deadline,
+      description: req.body.description,
+    },
+      {new: true} ).exec();
+
+    //Map through the new files questions and append one by one
+    if(req.body.newQuestions){
+      req.body.newQuestions.forEach(async (item) => {
+          const questionsAppend = await Quiz.findOneAndUpdate({ slug: req.params.slug }, {
+              $push: {questions: item}
+          }, { new: true }).exec()
+      })
+    }
     const newSlug = slugify(req.body.title.toLowerCase());
     if (quiz)
     return res.json({quiz, updatedSlug: newSlug});
@@ -126,19 +136,99 @@ export const questionDelete = async (req, res) => {
 export const questionEdit = async (req, res) => {
   try {
     console.log("questionEdit", req.body)
+    let questionIndex;
     const quiz = await Quiz.findById(req.params.quizId).exec();
     const updated = await Quiz.updateOne(
-      {"questions._id": req.params.questionId},
+      {
+        "_id": req.params.quizId,
+        "questions._id": req.params.questionId,
+      },
       {
         $set:{
-            "questions.$.title": req.body.titleField,
+            "questions.$.title": req.body.title,
             "questions.$.optionType": req.body.optionType,
-            "questions.$.options": req.body.tempArr
-        }
+            "questions.$.correctAnswer": req.body.correctAnswer,
+            "questions.$.image": req.body.image,
+        },
       },
-      { new: true }
+      // {
+      //   $unset:{
+      //       "questions.$.options": [],
+      //   },
+      // },
+      {upsert: true, new: true }
     ).exec();
-    console.log("updated => ", updated);
+    const reset = await Quiz.updateOne(
+      {
+        "_id": req.params.quizId,
+        "questions._id": req.params.questionId,
+      },
+      {
+        $unset:{
+            "questions.$.options": [],
+        },
+      },
+      {new: true }
+    ).exec();
+    //Map through the new files array ang append one by one
+    console.log('req.body.options', req.body.options)
+    for (let index = 0; index < req.body.options.length; index++) {
+      const push = await Quiz.updateOne(
+        {
+          "_id": req.params.quizId,
+          "questions._id": req.params.questionId,
+        },
+        {
+          $push:{
+              "questions.$.options": req.body.options[index],
+          },
+        },
+        { new: true }
+      ).exec();
+
+    }
+    // const push = await Quiz.updateOne(
+    //   {
+    //     "_id": req.params.quizId,
+    //     "questions._id": req.params.questionId,
+    //   },
+    //   {
+    //     $set:{
+    //         "questions.$.options": req.body.options,
+    //     },
+    //   },
+    //   {upsert: true, new: true }
+    // ).exec();
+
+  //   const pullQuestion = await Quiz.findByIdAndUpdate(req.params.quizId, {
+  //       $pull: { questions: { _id: req.params.questionId } },
+  //   }).exec();
+
+  //   quiz.questions.forEach((item, index) => {
+  //     if(item._id.toString() === req.params.questionId){
+  //       questionIndex = index
+  //     }
+  //   })
+
+  //   const pushQuestion = Quiz.findOneAndUpdate(
+  //     {_id: req.params.quizId},
+  //     {
+  //       $push: {
+  //         questions: {
+  //           $each: [{
+  //             title: req.body.title,
+  //             optionType: req.body.optionType,
+  //             options: req.body.options,
+  //             correctAnswer: req.body.correctAnswer,
+  //             image: req.body.image
+  //           }],
+  //             $position: questionIndex
+  //         }
+  //       }
+  //     }, { upsert: true, new: true }
+  // ).exec();
+  //   console.log("pullQuestion => ", pullQuestion);
+  //   console.log("pushQuestion => ", pushQuestion);
     res.json({ ok: true });
 
   } catch (error) {
